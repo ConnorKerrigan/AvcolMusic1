@@ -1,0 +1,54 @@
+﻿@model IEnumerable<AvcolMusic1.Models.MusicTimetable>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Group)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Group.Instrument)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Group.Teacher)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Group.GroupID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.FirstName)
+                @Html.DisplayFor(modelItem => item.Student.Surname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Group.Instrument)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Group.TeacherID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MusicTimetableID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MusicTimetableID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MusicTimetableID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
