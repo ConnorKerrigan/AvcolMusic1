@@ -20,10 +20,31 @@ namespace AvcolMusic1.Views.MusicTimetables
         }
 
         // GET: MusicTimetables
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string currentFilter, string searchString, int? pageNumber)
         {
-            var musicContext = _context.MusicTimetable.Include(m => m.Group).Include(m => m.Student);
-            return View(await musicContext.ToListAsync());
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var musicTimetables = from m in _context.MusicTimetable.Include(m => m.Group).Include(m => m.Student)
+                                  select m;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                musicTimetables = musicTimetables.Where(s => s.Student.Surname.Contains(searchString)
+                                       || s.Student.FirstName.Contains(searchString)
+                                       || s.Group.Instrument.Contains(searchString));
+            }
+
+            int pageSize = 10;
+            return View(await PaginatedList<MusicTimetable>.CreateAsync(musicTimetables.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: MusicTimetables/Details/5

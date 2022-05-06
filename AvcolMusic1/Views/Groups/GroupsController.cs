@@ -20,10 +20,31 @@ namespace AvcolMusic1.Views.Groups
         }
 
         // GET: Groups
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber, string searchString, string currentFilter)
         {
-            var musicContext = _context.Group.Include(g => g.Teacher);
-            return View(await musicContext.ToListAsync());
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var groups = from g in _context.Group.Include(g => g.Teacher)
+                         select g;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                groups = groups.Where(s => s.TeacherID.Contains(searchString)
+                                       || s.Room.Contains(searchString)
+                                       || s.Instrument.Contains(searchString));
+            }
+
+            int pageSize = 10;
+            return View(await PaginatedList<Group>.CreateAsync(groups.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Groups/Details/5

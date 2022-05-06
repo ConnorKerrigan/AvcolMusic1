@@ -9,12 +9,12 @@ namespace AvcolMusic1.Models
         public int StudentID { get; set; }
         [Required]
         [StringLength(30, ErrorMessage ="The name entered is too long.")]
-        [RegularExpression(@"^[A-Za-z]*$", ErrorMessage = "Only letters can be used")]
+        [RegularExpression(@"^[A-Za-z\']*$", ErrorMessage = "Only letters can be used")]
         public string Surname { get; set; }
         [Required]
         [Display(Name = "First Name")]
         [StringLength(30, ErrorMessage = "The name entered is too long.")]
-        [RegularExpression(@"^[A-Za-z]*$", ErrorMessage = "Only letters can be used")]
+        [RegularExpression(@"^[A-Za-z\']*$", ErrorMessage = "Only letters can be used")]
         public string FirstName { get; set; }
         [Required]
         [Range(9,13,ErrorMessage ="Please enter a valid year level for Avondale College (Ranges from 9 - 13).")]

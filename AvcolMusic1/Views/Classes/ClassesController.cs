@@ -20,10 +20,13 @@ namespace AvcolMusic1.Views.Classes
         }
 
         // GET: Classes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber)
         {
-            var musicContext = _context.Class.Include(c => c.Student).Include(c => c.Teacher);
-            return View(await musicContext.ToListAsync());
+            var classes = from c in _context.Class.Include(c => c.Student).Include(c => c.Teacher)
+                          select c;
+
+            int pageSize = 10;
+            return View(await PaginatedList<Class>.CreateAsync(classes.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Classes/Details/5

@@ -16,7 +16,7 @@ namespace AvcolMusic1.Models
         public string Instrument { get; set; }
         [Required]
         [StringLength(3, ErrorMessage = "Please enter the three-letter room name (or two-letter in three letter format eg. A.2).")]
-        [RegularExpression(@"^[A-Z]{3}$", ErrorMessage = "Please enter a three letter code in all caps (or two-letter in three letter format eg. A.2).")]
+        [RegularExpression(@"^[A-Z\d\.]{3}$", ErrorMessage = "Please enter a three letter code in all caps (or two-letter in three letter format eg. A.2).")]
         public string Room { get; set; }
         [Required]
         [StringLength(8, ErrorMessage = "Enter valid day")]

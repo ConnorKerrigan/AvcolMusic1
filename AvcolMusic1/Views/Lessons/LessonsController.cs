@@ -20,10 +20,29 @@ namespace AvcolMusic1.Views.Lessons
         }
 
         // GET: Lessons
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber, int? searchInt, int currentFilter)
         {
-            var musicContext = _context.Lesson.Include(l => l.Group);
-            return View(await musicContext.ToListAsync());
+            if (searchInt != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchInt = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchInt;
+
+            var lessons = from l in _context.Lesson.Include(l => l.Group)
+            select l;
+
+            if (!Int32.Equals(searchInt, null) && searchInt != 0)
+            {
+                lessons = lessons.Where(s => s.GroupID == searchInt);
+            }
+
+            int pageSize = 10;
+            return View(await PaginatedList<Lesson>.CreateAsync(lessons.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Lessons/Details/5

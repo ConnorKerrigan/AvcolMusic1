@@ -20,9 +20,56 @@ namespace AvcolMusic1.Views.Teachers
         }
 
         // GET: Teachers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int searchInt, int? pageNumber)
         {
-            return View(await _context.Teacher.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["IDSortParm"] = sortOrder == "ID" ? "ID_desc" : "ID";
+            ViewData["SurnameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Surname_desc" : "";
+            ViewData["FirstnameSortParm"] = sortOrder == "Firstname" ? "Firstname_desc" : "Firstname";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var teachers = from s in _context.Teacher
+                           select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                teachers = teachers.Where(s => s.Surname.Contains(searchString)
+                                       || s.Firstname.Contains(searchString)
+                                       || s.TeacherID.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "Surname_desc":
+                    teachers = teachers.OrderByDescending(s => s.Surname);
+                    break;
+                case "ID":
+                    teachers = teachers.OrderBy(s => s.TeacherID);
+                    break;
+                case "ID_desc":
+                    teachers = teachers.OrderByDescending(s => s.TeacherID);
+                    break;
+                case "Firstname":
+                    teachers = teachers.OrderBy(s => s.Firstname);
+                    break;
+                case "Firstname_desc":
+                    teachers = teachers.OrderByDescending(s => s.Firstname);
+                    break;
+                default:
+                    teachers = teachers.OrderBy(s => s.Surname);
+                    break;
+            }
+
+            int pageSize = 10;
+            return View(await PaginatedList<Teacher>.CreateAsync(teachers.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Teachers/Details/5
