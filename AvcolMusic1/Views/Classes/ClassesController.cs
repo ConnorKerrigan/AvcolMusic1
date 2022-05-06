@@ -20,10 +20,53 @@ namespace AvcolMusic1.Views.Classes
         }
 
         // GET: Classes
-        public async Task<IActionResult> Index(int? pageNumber)
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Date_asc" : "";
+            ViewData["TeacherIDSortParm"] = sortOrder == "TeacherID" ? "TeacherID_desc" : "TeacherID";
+            ViewData["StudentIDSortParm"] = sortOrder == "StudentID" ? "StudentID_desc" : "StudentID";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var classes = from c in _context.Class.Include(c => c.Student).Include(c => c.Teacher)
                           select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                classes = classes.Where(s => s.TeacherID.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "Date_asc":
+                    classes = classes.OrderBy(s => s.Date);
+                    break;
+                case "StudentID":
+                    classes = classes.OrderBy(s => s.StudentID);
+                    break;
+                case "StudentID_desc":
+                    classes = classes.OrderByDescending(s => s.StudentID);
+                    break;
+                case "TeacherID":
+                    classes = classes.OrderBy(s => s.TeacherID);
+                    break;
+                case "TeacherID_desc":
+                    classes = classes.OrderByDescending(s => s.TeacherID);
+                    break;
+                default:
+                    classes = classes.OrderByDescending(s => s.Date);
+                    break;
+            }
 
             int pageSize = 10;
             return View(await PaginatedList<Class>.CreateAsync(classes.AsNoTracking(), pageNumber ?? 1, pageSize));
