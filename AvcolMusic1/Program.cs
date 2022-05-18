@@ -30,7 +30,6 @@ namespace AvcolMusic1
                 try
                 {
                     var context = services.GetRequiredService<MusicContext>();
-                    DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AvcolMusic1.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace AvcolMusic1.Data
 {
-    public class MusicContext : DbContext
+    public class MusicContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {
-        public MusicContext(DbContextOptions<MusicContext> options)
-            : base(options)
+        public MusicContext(DbContextOptions<MusicContext> options) : base(options)
         {
         }
 

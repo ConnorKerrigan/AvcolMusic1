@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity;
 
 namespace AvcolMusic1
 {
@@ -30,6 +33,18 @@ namespace AvcolMusic1
 
             services.AddDbContext<MusicContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("MusicContext")));
+
+            services.AddDefaultIdentity<IdentityUser>
+    (options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
+.AddEntityFrameworkStores<MusicContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +65,7 @@ namespace AvcolMusic1
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
